@@ -1,0 +1,1 @@
+export const STRIPE_PK = "pk_test_51NiaBnG5LWC441mfYbPbZQmJUds51mpddRlrnqTLhjAhwIEL25lwyJc60DiJh9klxiiVerGjOvMFkazhPO1myfc200RMyIdDbf"
