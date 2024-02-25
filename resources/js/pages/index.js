@@ -1,1 +1,4 @@
-export { default as Home } from './Home.vue'
+export { default as Signin } from './Signin.vue'
+export { default as Signup } from './Signup.vue'
+export { default as Board } from './Boards.vue'
+export { default as BoardDetails } from './BoardDetails.vue'

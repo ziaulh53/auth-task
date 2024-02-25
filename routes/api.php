@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BoardController;
+use App\Http\Controllers\Api\CardController;
+use App\Http\Controllers\Api\TaskListController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -14,6 +18,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+
+
+Route::middleware('auth:sanctum')->group(function (){
+    Route::apiResource('/board', BoardController::class);
+    Route::apiResource('/list', TaskListController::class);
+    Route::get('/list-board/{id}', [TaskListController::class, 'taskListOnBoard']);
+    Route::apiResource('/card',CardController::class);
+    // Route::get('/board/{id}', [BoardController::class, 'singleBoard']);
 });
+
+Route::post('/signup', [AuthController::class, 'register']);
+Route::post('/signin', [AuthController::class, 'login']);
