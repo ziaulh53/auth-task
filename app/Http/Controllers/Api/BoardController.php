@@ -16,9 +16,12 @@ class BoardController extends Controller
      */
     public function index()
     {
-        $id = Auth::id();
-        $boards = Board::query()->where('user_id', $id)->get();
-        return response(['success' => true, 'boards' => $boards]);
+        /** @var User $user */
+        $user = Auth::user();
+        $ownedBoards = $user->ownedBoards()->get();
+        $memberBoards = $user->boards()->get();
+        // $boards = Board::query()->where('user_id', $id)->get();
+        return response(['success' => true, 'boards' => $ownedBoards, 'memberBoard'=>$memberBoards]);
     }
 
 
@@ -26,8 +29,9 @@ class BoardController extends Controller
     {
         // $user = Auth::user();
         $board = Board::findOrFail($id);
+        $members = $board->members()->get();
 
-        return response(['success' => true, 'board' => $board]);
+        return response(['success' => true, 'board' => $board, 'members'=>$members]);
     }
 
     /**

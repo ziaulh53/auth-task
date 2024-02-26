@@ -6,21 +6,23 @@
             <span class="text-sm text-red-500 cursor-pointer" @click="handleDeleteList"><i class="fas fa-trash"></i></span>
         </div>
     </div>
-    <div>
-        <div v-for="card of data?.cards" :key="card?.id" class="bg-white rounded-lg p-2 mb-2">
-            {{ card?.title }}
-        </div>
-        <div v-if="visibleAddCard">
-            <textarea class="py-2 px-3 border-2 w-full rounded-lg mb-2" v-model="cardTitle" />
-            <div class="flex items-center">
-                <button class="bg-blue-700 text-white py-1 px-3 rounded-lg mr-5" @click="handleCreateCard">Add</button>
-                <span class="cursor-pointer text-lg" @click="() => onClose()"><i class="fas fa-close"></i></span>
+    <draggable v-model="data.cards" group="cards" @start="drag = true" item-key="id" @end="onDragEnd">
+        <template #item="{ element }">
+            <div v-bind:data-list-id="data.id" class="bg-white rounded-lg p-2 mb-2">
+                {{ element?.title }}
             </div>
+        </template>
+    </draggable>
+    <div v-if="visibleAddCard">
+        <textarea class="py-2 px-3 border-2 w-full rounded-lg mb-2" v-model="cardTitle" />
+        <div class="flex items-center">
+            <button class="bg-blue-700 text-white py-1 px-3 rounded-lg mr-5" @click="handleCreateCard">Add</button>
+            <span class="cursor-pointer text-lg" @click="() => onClose()"><i class="fas fa-close"></i></span>
         </div>
-        <button v-if="!visibleAddCard" class="w-full bg-opacity-25 bg-red-700 py-2 rounded-lg"
-            @click="() => visibleAddCard = true">Add
-            Card</button>
     </div>
+    <button v-if="!visibleAddCard" class="w-full bg-opacity-25 bg-red-700 py-2 rounded-lg"
+        @click="() => visibleAddCard = true">Add
+        Card</button>
     <a-modal title="Edit List" v-model:open="open" :okButtonProps="{ disabled: !title || loading, loading: loading }"
         :onOk="handleUpdate">
         <div class="mb-2 font-semibold">List title</div>
@@ -31,6 +33,7 @@
 <script setup>
 import { toRefs, ref } from 'vue';
 import { api } from '../../api';
+import draggable from 'vuedraggable';
 
 const props = defineProps({
     data: Object,
@@ -83,9 +86,17 @@ const handleCreateCard = async () => {
     }
 }
 
+const onDragEnd = (event) => {
+    const fromListId = Number(data.value.id);
+    const toListId = Number(event.to.firstChild?.dataset?.listId);
+    const oldIndex = Number(event.oldIndex);
+    const newIndex = Number(event.newIndex);
+    api.post('update-card-order', { fromListId, toListId, oldIndex, newIndex });
+}
+
 
 // control modal
-const openModal = (data) => {
+const openModal = () => {
     open.value = true;
 }
 

@@ -25,4 +25,8 @@ class Board extends Model
     {
         return $this->hasMany(TaskList::class)->orderBy('order');
     }
+    public function invitations()
+    {
+        return $this->hasMany(Invitation::class);
+    }
 }

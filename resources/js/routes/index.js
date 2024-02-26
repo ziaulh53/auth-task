@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { Board, BoardDetails, Signin, Signup } from "../pages";
+import { Board, BoardDetails, Invitations, Signin, Signup } from "../pages";
 import { useAuthStore } from "../store";
 
 const routes = [
@@ -9,32 +9,40 @@ const routes = [
         component: Signin,
         meta: {
             requireAuth: false,
-        }
+        },
     },
     {
-      path: "/signup",
-      name: "signup",
-      component: Signup,
-      meta: {
-          requireAuth: false,
-      }
-  },
+        path: "/signup",
+        name: "signup",
+        component: Signup,
+        meta: {
+            requireAuth: false,
+        },
+    },
     {
-      path: "/boards",
-      name: "board",
-      component: Board,
-      meta: {
-          requireAuth: true,
-      }
-  },
-  {
-    path: "/boards/:id",
-    name: "board-details",
-    component: BoardDetails,
-    meta: {
-        requireAuth: true,
-    }
-},
+        path: "/boards",
+        name: "board",
+        component: Board,
+        meta: {
+            requireAuth: true,
+        },
+    },
+    {
+        path: "/invitations",
+        name: "invitaions",
+        component: Invitations,
+        meta: {
+            requireAuth: true,
+        },
+    },
+    {
+        path: "/boards/:id",
+        name: "board-details",
+        component: BoardDetails,
+        meta: {
+            requireAuth: true,
+        },
+    },
 ];
 
 const router = createRouter({
@@ -45,13 +53,10 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
     const userStore = useAuthStore();
     const { isAuthenticated } = userStore.user;
-    if ( to.meta.requireAuth && !isAuthenticated) {
-      next("/");
-    } else if (
-      !to.meta.requireAuth &&
-      isAuthenticated
-    ) {
-      next("/boards");
+    if (to.meta.requireAuth && !isAuthenticated) {
+        next("/");
+    } else if (!to.meta.requireAuth && isAuthenticated) {
+        next("/boards");
     } else next();
 });
 

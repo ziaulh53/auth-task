@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BoardController;
 use App\Http\Controllers\Api\CardController;
+use App\Http\Controllers\Api\InvitationController;
 use App\Http\Controllers\Api\TaskListController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -21,11 +22,17 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('auth:sanctum')->group(function (){
+    Route::post('/signout', [AuthController::class, 'logout']);
     Route::apiResource('/board', BoardController::class);
     Route::apiResource('/list', TaskListController::class);
     Route::get('/list-board/{id}', [TaskListController::class, 'taskListOnBoard']);
+    Route::post('/update-list-order', [TaskListController::class, 'updateListOrder']);
+    Route::post('/update-card-order', [TaskListController::class, 'updateCardOrder']);
     Route::apiResource('/card',CardController::class);
-    // Route::get('/board/{id}', [BoardController::class, 'singleBoard']);
+    Route::post('/invite-member',[InvitationController::class, 'invite']);
+    Route::post('/invite-accept',[InvitationController::class, 'accept']);
+    Route::get('/invitation',[InvitationController::class, 'getUserInvitations']);
+    // Route::get('/invitations/accept/{invitation}', [InvitationController::class, 'accept'])->name('invitations.accept');
 });
 
 Route::post('/signup', [AuthController::class, 'register']);

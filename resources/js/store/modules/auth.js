@@ -43,7 +43,7 @@ export const useAuthStore = defineStore("auth", {
         },
         async userLogout(endpoint) {
             try {
-                const res = await api.post(endpoint);
+                const res = await api.post('/signout');
                 if (res.success) {
                     this.auth = {
                         isAuthenticated: false,
