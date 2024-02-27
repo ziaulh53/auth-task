@@ -19,7 +19,7 @@
             </div>
             <div class="mb-2">
                 <button class="w-full p-2 bg-blue-950 text-white rounded-lg disabled:bg-blue-200" :disabled="disabled"
-                    @click="handleRegister">Signin</button>
+                    @click="handleRegister">Signup</button>
             </div>
             <div class="">
                 <p>Don't have an account? <router-link to="/signup" class="text-blue-500 hover:underline ml-3">Click

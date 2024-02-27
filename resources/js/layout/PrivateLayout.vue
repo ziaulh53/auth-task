@@ -8,9 +8,6 @@
                 </a>
                 <template #overlay>
                     <a-menu>
-                        <!-- <a-menu-item key="0">
-                            <a href="http://www.alipay.com/">1st menu item</a>
-                        </a-menu-item> -->
                         <a-menu-item key="1">
                             <RouterLink to="/invitations">Invitations</RouterLink>
                         </a-menu-item>

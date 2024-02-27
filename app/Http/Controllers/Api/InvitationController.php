@@ -35,7 +35,7 @@ class InvitationController extends Controller
         ]);
 
         Mail::to($request->email)->send(new BoardInvitation($invitation));
-        return response()->json(['success' => true, 'msg' => 'Invitation sent successfully.'], 200);
+        return response(['success' => true, 'msg' => 'Invitation sent successfully.'], 200);
     }
 
     public function accept(Request $request){
@@ -43,13 +43,27 @@ class InvitationController extends Controller
         $user = User::where('email', $invitation->email)->firstOrFail();
         $invitation->board->members()->attach($user);
         $invitation->delete();
-        return response()->json(['success' => true, 'msg' => 'Invitation accepted successfully.', 'board_id'=>$invitation->board_id], 200);
+        return response(['success' => true, 'msg' => 'Invitation accepted successfully.', 'board_id'=>$invitation->board_id], 200);
     }
 
     public function getUserInvitations(){
         $user = Auth::user();
-        $invitations = Invitation::query()->where('email', $user->email)->get();
+        $invitations = Invitation::query()->where('email', $user->email)->with('board')->get();
         return response(['success'=>false, 'invitations'=>$invitations]);
+    }
+
+    public function cancelInvitation(Request $request)
+    {
+        // Check if the invitation exists
+        $invitation = Invitation::findOrFail($request->invitation_id);
+        if (!$invitation) {
+            return response()->json(['success' => false, 'message' => 'Invitation not found.'], 404);
+        }
+
+        // Delete the invitation
+        $invitation->delete();
+
+        return response()->json(['success' => true, 'msg' => 'Invitation canceled successfully.'], 200);
     }
 
 }

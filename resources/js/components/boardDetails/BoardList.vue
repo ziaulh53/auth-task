@@ -1,16 +1,17 @@
 <template>
     <div class="flex justify-between mb-4">
         <h4>{{ data?.title }}</h4>
-        <div>
+        <div v-if="isOwner">
             <span class="mr-2 text-sm cursor-pointer" @click="openModal"><i class="fas fa-edit"></i></span>
             <span class="text-sm text-red-500 cursor-pointer" @click="handleDeleteList"><i class="fas fa-trash"></i></span>
         </div>
     </div>
     <draggable v-model="data.cards" group="cards" @start="drag = true" item-key="id" @end="onDragEnd">
         <template #item="{ element }">
-            <div v-bind:data-list-id="data.id" class="bg-white rounded-lg p-2 mb-2">
-                {{ element?.title }}
+            <div v-bind:data-list-id="data.id">
+                <ListCard :data="element" :refetch="refetch" :isOwner="isOwner" :board-id="data.board_id"/>
             </div>
+
         </template>
     </draggable>
     <div v-if="visibleAddCard">
@@ -34,10 +35,12 @@
 import { toRefs, ref } from 'vue';
 import { api } from '../../api';
 import draggable from 'vuedraggable';
+import ListCard from './ListCard.vue';
 
 const props = defineProps({
     data: Object,
-    refetch: Function
+    refetch: Function,
+    isOwner: Boolean
 })
 
 const { refetch, data } = toRefs(props);
@@ -99,6 +102,8 @@ const onDragEnd = (event) => {
 const openModal = () => {
     open.value = true;
 }
+
+
 
 const onClose = () => {
     title.value = "";

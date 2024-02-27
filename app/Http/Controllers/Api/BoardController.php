@@ -83,4 +83,19 @@ class BoardController extends Controller
             return response(['success' => false, 'msg' => 'Board not found'], 404);
         }
     }
+
+
+    public function removeMember(Request $request)
+    {
+        // Check if the user is a member of the board
+        $board = Board::findOrFail($request->board_id);
+        if (!$board->members()->where('id', $request->member_id)->exists()) {
+            return response()->json(['success' => false, 'msg' => 'User is not a member of this board.'], 404);
+        }
+
+        // Detach the user from the board
+        $board->members()->detach($request->member_id);
+
+        return response()->json(['success' => true, 'msg' => 'User removed from the board successfully.'], 200);
+    }
 }

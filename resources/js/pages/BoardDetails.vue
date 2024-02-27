@@ -1,15 +1,12 @@
 <template>
     <PrivateLayout />
-    <a-spin :spinning="loading">
-        <BoardHeader :boardData="boardData" />
-    </a-spin>
-
+    <BoardHeader :boardData="boardData" :members="members" :isOwner="isOwner" :refetch="fetchBoard" />
     <div class="overflow-x-auto whitespace-nowrap rounded p-4 w-full relative">
         <draggable class="inline-flex space-x-4 items-start" v-model="allLists" group="list" @start="drag = true"
             item-key="id" :ondragend="onDragEnd">
             <template #item="{ element }">
-                <div class="w-[284px] bg-gray-200 p-2 rounded-lg">
-                    <BoardList :data="element" :refetch="fetchLists" />
+                <div class="w-[284px] bg-gray-200 p-2 rounded-lg max-h-[75vh] overflow-x-auto">
+                    <BoardList :data="element" :refetch="fetchLists" :isOwner="isOwner" />
                 </div>
             </template>
         </draggable>
@@ -30,14 +27,19 @@ import { BoardHeader, BoardList } from '../components/boardDetails';
 import { api } from '../api';
 import { useRoute } from 'vue-router';
 import draggable from 'vuedraggable';
+import { useAuthStore } from '../store';
 
 const route = useRoute();
 const boardData = ref({});
+const members = ref([]);
 const allLists = ref([]);
 const title = ref("");
 const open = ref(false);
 const loading = ref(false);
 const addLoading = ref(false);
+const isOwner = ref(false);
+
+const userStore = useAuthStore();
 
 const disabled = computed(() => !title.value);
 
@@ -46,6 +48,8 @@ const fetchBoard = async () => {
     try {
         const res = await api.get('board/' + route.params.id);
         boardData.value = res?.board;
+        members.value = res?.members;
+        isOwner.value = res?.board?.user_id === userStore.user?.user?.id;
     } catch (error) {
         console.log(error.message);
     }

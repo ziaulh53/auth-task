@@ -29,7 +29,7 @@ class TaskListController extends Controller
 
     public function taskListOnBoard(string $id)
     {
-        $lists = TaskList::where('board_id', $id)->with('cards')->orderBy('order')->get();
+        $lists = TaskList::where('board_id', $id)->with('cards.assignedUsers')->orderBy('order')->get();
         return response()->json(['lists' => $lists], 200);
     }
 

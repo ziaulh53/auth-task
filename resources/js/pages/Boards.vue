@@ -1,6 +1,6 @@
 <template>
     <PrivateLayout>
-        <div class="flex items-center justify-between border-b-2 pb-5 mb-4">
+        <div class="flex items-center justify-between border-b-2 pb-5 my-4">
             <h2 class="text-xl font-semibold">Your Projects</h2>
             <button class="bg-blue-950 text-white px-4 py-1 rounded-lg" @click="() => open = true">Create New</button>
         </div>
@@ -14,6 +14,24 @@
                             <span @click="() => onOpenModal(board)"><i class="fas fa-edit text-gray-700"></i></span>
                             <span @click="() => handleDelete(board.id)"><i class="fas fa-trash text-red-500"></i></span>
                         </div>
+                    </div>
+                </router-link>
+            </div>
+        </a-spin>
+
+        <div class="flex items-center justify-between border-b-2 pb-5 my-4">
+            <h2 class="text-xl font-semibold">You are member of</h2>
+        </div>
+
+        <a-spin :spinning="loading">
+            <div class="grid grid-cols-4 gap-5">
+                <router-link v-for="board of memberBoards" :key="board.id" :to="'/boards/' + board.id">
+                    <div class="bg-slate-200 p-5 rounded-lg">
+                        <h3 class="font-bold mb-3">{{ board?.title }}</h3>
+                        <!-- <div class="flex justify-between">
+                            <span @click="() => onOpenModal(board)"><i class="fas fa-edit text-gray-700"></i></span>
+                            <span @click="() => handleDelete(board.id)"><i class="fas fa-trash text-red-500"></i></span>
+                        </div> -->
                     </div>
                 </router-link>
             </div>
@@ -40,6 +58,7 @@ const addLoading = ref(false);
 const title = ref("");
 const boardId = ref("");
 const allBoard = ref([]);
+const memberBoards = ref([]);
 const disabled = computed(() => !title.value);
 
 const handleSubmit = async () => {
@@ -69,6 +88,7 @@ const fetchBoards = async () => {
     try {
         const res = await api.get('board');
         allBoard.value = res?.boards || [];
+        memberBoards.value = res?.memberBoard ||[]
     } catch (error) {
         console.log(error.message)
     }

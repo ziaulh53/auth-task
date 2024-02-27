@@ -13,9 +13,12 @@ return new class extends Migration
     {
         Schema::create('cards', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->foreignId('task_list_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->text('description')->nullable();
+            $table->enum('priority', ['Low', 'Medium', 'High'])->default('Medium');
+            $table->json('labels')->nullable();
             $table->integer('order')->default(0);
             $table->timestamps();
         });
