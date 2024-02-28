@@ -1,7 +1,7 @@
 <template>
     <div class="flex justify-between mb-4">
         <h4>{{ data?.title }}</h4>
-        <div v-if="isOwner">
+        <div v-if="isOwner || data.user_id===webUser.id">
             <span class="mr-2 text-sm cursor-pointer" @click="openModal"><i class="fas fa-edit"></i></span>
             <span class="text-sm text-red-500 cursor-pointer" @click="handleDeleteList"><i class="fas fa-trash"></i></span>
         </div>
@@ -40,7 +40,8 @@ import ListCard from './ListCard.vue';
 const props = defineProps({
     data: Object,
     refetch: Function,
-    isOwner: Boolean
+    isOwner: Boolean,
+    webUser: Object
 })
 
 const { refetch, data } = toRefs(props);
@@ -50,7 +51,6 @@ const cardTitle = ref("");
 const loading = ref(false);
 const open = ref(false);
 const visibleAddCard = ref(false);
-
 const handleDeleteList = async () => {
     try {
         const res = await api.delete('list/', data.value.id);

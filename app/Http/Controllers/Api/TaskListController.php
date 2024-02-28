@@ -88,6 +88,7 @@ class TaskListController extends Controller
      */
     public function store(Request $request)
     {
+        $userId = Auth::id();
         $validator = Validator::make($request->all(), [
             'board_id' => 'required|exists:boards,id',
             'title' => 'required|string|max:255',
@@ -95,13 +96,14 @@ class TaskListController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'msg' => 'Bad Input'], 201);
+            return response(['success' => false, 'msg' => 'Bad Input'], 201);
         }
 
         TaskList::create([
             'board_id' => $request->board_id,
             'title' => $request->title,
             'order' => $request->order,
+            'user_id'=>$userId
         ]);
 
         return response(['success' => true, 'msg' => 'List created.']);

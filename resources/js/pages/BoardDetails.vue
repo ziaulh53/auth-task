@@ -1,16 +1,20 @@
 <template>
     <PrivateLayout />
     <BoardHeader :boardData="boardData" :members="members" :isOwner="isOwner" :refetch="fetchBoard" />
-    <div class="overflow-x-auto whitespace-nowrap rounded p-4 w-full relative">
+    <div v-if="!loading && !accessDenied" class="overflow-x-auto whitespace-nowrap rounded p-4 w-full relative">
         <draggable class="inline-flex space-x-4 items-start" v-model="allLists" group="list" @start="drag = true"
             item-key="id" :ondragend="onDragEnd">
             <template #item="{ element }">
                 <div class="w-[284px] bg-gray-200 p-2 rounded-lg max-h-[75vh] overflow-x-auto">
-                    <BoardList :data="element" :refetch="fetchLists" :isOwner="isOwner" />
+                    <BoardList :data="element" :refetch="fetchLists" :isOwner="isOwner" :web-user="userStore.user?.user" />
                 </div>
             </template>
         </draggable>
         <button class="w-[284px] bg-blue-700 rounded-lg ms-4 text-white py-2" @click="() => open = true">Add List</button>
+    </div>
+
+    <div v-if="accessDenied" class="text-center mt-10">
+        <RouterLink to="/boards"><span class="px-4 py-2 bg-blue-700 text-white">Go to board list</span></RouterLink>
     </div>
 
     <a-modal title="Create List" v-model:open="open"
@@ -38,6 +42,7 @@ const open = ref(false);
 const loading = ref(false);
 const addLoading = ref(false);
 const isOwner = ref(false);
+const accessDenied = ref(false);
 
 const userStore = useAuthStore();
 
@@ -50,6 +55,9 @@ const fetchBoard = async () => {
         boardData.value = res?.board;
         members.value = res?.members;
         isOwner.value = res?.board?.user_id === userStore.user?.user?.id;
+        if (!res?.success) {
+            accessDenied.value = true;
+        }
     } catch (error) {
         console.log(error.message);
     }

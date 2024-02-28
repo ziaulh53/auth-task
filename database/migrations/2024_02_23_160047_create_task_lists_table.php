@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('task_lists', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->nullable()->after('id');
             $table->foreignId('board_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->integer('order')->default(0);

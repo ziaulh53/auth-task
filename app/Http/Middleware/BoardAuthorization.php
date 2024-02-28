@@ -17,12 +17,10 @@ class BoardAuthorization
     public function handle(Request $request, Closure $next)
     {
         $boardId = $request->route('id');
-        /** @var User $user */
-        $user = Auth::user();
-        // dd($boardId);
+        $user = $request->user();
         if ($user->ownedBoards()->where('id', $boardId)->exists() || $user->boards()->where('id', $boardId)->exists()) {
             return $next($request);
         }
-        abort(403, 'Unauthorized');
+        return response(['success'=>false, 'msg'=>'Access denied']);
     }
 }

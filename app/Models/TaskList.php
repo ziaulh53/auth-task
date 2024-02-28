@@ -9,7 +9,7 @@ class TaskList extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'board_id', 'order'];
+    protected $fillable = ['title', 'board_id', 'order', 'user_id'];
 
     public function board()
     {

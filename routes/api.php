@@ -25,13 +25,13 @@ Route::middleware('auth:sanctum')->group(function (){
     Route::post('/signout', [AuthController::class, 'logout']);
     
     //board api
-    // Route::middleware(BoardAuthorization::class)->apiResource('/board', BoardController::class);
+    Route::middleware('board.auth')->get('/board/{id}', [BoardController::class,'show']);
     Route::apiResource('/board', BoardController::class);
     Route::post('/member-delete', [BoardController::class, 'removeMember']);
 
     // tasklist api
     Route::apiResource('/list', TaskListController::class);
-    Route::get('/list-board/{id}', [TaskListController::class, 'taskListOnBoard']);
+    Route::middleware('board.auth')->get('/list-board/{id}', [TaskListController::class, 'taskListOnBoard']);
     Route::post('/update-list-order', [TaskListController::class, 'updateListOrder']);
     Route::post('/update-card-order', [TaskListController::class, 'updateCardOrder']);
     
