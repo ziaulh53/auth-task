@@ -39,7 +39,8 @@ class CardController extends Controller
             'task_list_id' => $request->task_list_id,
             'title' => $request->title,
             'user_id'=>$userId,
-            'priority'=>'Low'
+            'priority'=>'Low',
+            'order'=> $request->order
         ]);
         return response(['success'=>true, 'msg'=>'Card created']);
     }

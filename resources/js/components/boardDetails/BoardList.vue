@@ -78,7 +78,7 @@ const handleUpdate = async () => {
 
 const handleCreateCard = async () => {
     try {
-        const res = await api.post('card', { task_list_id: data.value.id, title: cardTitle.value });
+        const res = await api.post('card', { task_list_id: data.value.id, title: cardTitle.value, order:data.value.cards.length });
         if (res.success) {
             refetch.value();
             cardTitle.value = "";
