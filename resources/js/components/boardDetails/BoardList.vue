@@ -1,15 +1,26 @@
 <template>
     <div class="flex justify-between mb-4">
-        <h4>{{ data?.title }}</h4>
-        <div v-if="isOwner || data.user_id===webUser.id">
-            <span class="mr-2 text-sm cursor-pointer" @click="openModal"><i class="fas fa-edit"></i></span>
-            <span class="text-sm text-red-500 cursor-pointer" @click="handleDeleteList"><i class="fas fa-trash"></i></span>
-        </div>
+        <h4 class="text-sm font-semibold">{{ data?.title }}</h4>
+        <a-dropdown v-if="isOwner || data.user_id === webUser.id" :trigger="['click']">
+            <a class="ant-dropdown-link px-2 cursor-pointer" @click.prevent>
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </a>
+            <template #overlay>
+                <a-menu>
+                    <a-menu-item key="1">
+                        <button @click="openModal">Edit</button>
+                    </a-menu-item>
+                    <a-menu-item key="2">
+                        <button @click="handleDeleteList">Delete</button>
+                    </a-menu-item>
+                </a-menu>
+            </template>
+        </a-dropdown>
     </div>
     <draggable v-model="data.cards" group="cards" @start="drag = true" item-key="id" @end="onDragEnd">
         <template #item="{ element }">
             <div v-bind:data-list-id="data.id">
-                <ListCard :data="element" :refetch="refetch" :isOwner="isOwner" :board-id="data.board_id"/>
+                <ListCard :data="element" :refetch="refetch" :isOwner="isOwner" :board-id="data.board_id" />
             </div>
 
         </template>
@@ -21,7 +32,8 @@
             <span class="cursor-pointer text-lg" @click="() => onClose()"><i class="fas fa-close"></i></span>
         </div>
     </div>
-    <button v-if="!visibleAddCard" class="w-full bg-opacity-25 bg-red-700 py-2 rounded-lg"
+    <button v-if="!visibleAddCard"
+        class="w-full bg-opacity-25 bg-slate-500 py-2 rounded text-slate-700 text-sm font-semibold"
         @click="() => visibleAddCard = true">Add
         Card</button>
     <a-modal title="Edit List" v-model:open="open" :okButtonProps="{ disabled: !title || loading, loading: loading }"
@@ -78,7 +90,7 @@ const handleUpdate = async () => {
 
 const handleCreateCard = async () => {
     try {
-        const res = await api.post('card', { task_list_id: data.value.id, title: cardTitle.value, order:data.value.cards.length });
+        const res = await api.post('card', { task_list_id: data.value.id, title: cardTitle.value, order: data.value.cards.length });
         if (res.success) {
             refetch.value();
             cardTitle.value = "";

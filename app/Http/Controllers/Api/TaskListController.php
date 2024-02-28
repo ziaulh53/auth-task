@@ -75,52 +75,39 @@ class TaskListController extends Controller
 
     private function updateOrdersOnListChange(Card $card, $fromListId, $toListId, $newIndex)
     {
-        // Determine if the card is moving up or down in the same list
-        $movingUp = $card->task_list_id === $toListId && $card->order > $newIndex;
-
-        // Decrement order of cards after the removed card in the old list
+        $cardCountInList = Card::where('task_list_id', $toListId)->count();
         Card::where('task_list_id', $fromListId)
             ->where('order', '>', $card->order)
             ->orderBy('order')
             ->decrement('order');
 
-        // Increment order of cards after the new index in the new list
         Card::where('task_list_id', $toListId)
             ->where('order', '>=', $newIndex)
             ->orderBy('order')
             ->increment('order');
 
-        // If moving up in the same list, increment order of cards before the new index
-        if ($movingUp) {
-            Card::where('task_list_id', $toListId)
-                ->whereBetween('order', [$newIndex, $card->order - 1])
-                ->orderBy('order')
-                ->increment('order');
+        if ($newIndex >= $cardCountInList) {
+            $card->order = $cardCountInList;
+        } else {
+            $card->order = $newIndex;
         }
 
-        // Update the card's task_list_id and order
         $card->task_list_id = $toListId;
-        $card->order = $newIndex;
         $card->save();
     }
+
     private function updateOrdersWithinList(Card $card, $oldIndex, $newIndex)
     {
-        // Determine direction of movement (up or down)
         $direction = $oldIndex < $newIndex ? 'down' : 'up';
-
-        // Retrieve cards to update within the same list
         $cardsToUpdate = Card::where('task_list_id', $card->task_list_id)
             ->whereBetween('order', [$direction === 'down' ? $oldIndex : $newIndex, $direction === 'down' ? $newIndex : $oldIndex])
             ->orderBy('order')
             ->get();
 
-        // Update card order based on direction
         foreach ($cardsToUpdate as $cardToUpdate) {
             $cardToUpdate->order += $direction === 'down' ? -1 : 1;
             $cardToUpdate->save();
         }
-
-        // Update order of the moved card
         $card->order = $newIndex;
         $card->save();
     }

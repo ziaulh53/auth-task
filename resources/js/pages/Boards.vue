@@ -2,7 +2,7 @@
     <PrivateLayout>
         <div class="flex items-center justify-between border-b-2 pb-5 my-4">
             <h2 class="text-xl font-semibold">Your Projects</h2>
-            <button class="bg-blue-950 text-white px-4 py-1 rounded-lg" @click="() => open = true">Create New</button>
+            <button class="px-5 py-2 rounded-lg bg-slate-300 text-black text-sm font-semibold" @click="() => open = true">Create New</button>
         </div>
 
         <a-spin :spinning="loading">

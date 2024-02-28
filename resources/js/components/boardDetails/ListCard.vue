@@ -1,14 +1,14 @@
 <template>
-    <div class="bg-white rounded-lg p-2 mb-2 cursor-pointer relative" @click="handleOpenModal">
+    <div class="bg-white rounded shadow p-3 mb-3 cursor-pointer relative" @click="handleOpenModal">
         <div v-if="JSON.parse(data?.labels)?.length > 0" class="mb-2 flex">
             <div v-for="label of JSON.parse(data?.labels)" :key="label" class="h-[10px] w-[30px] rounded-md mr-2"
                 :style="{ background: label }"></div>
         </div>
-        <div v-if="data?.priority !=='Low'">
-            <a-tag :color="data?.priority ==='High' ? 'red':'green'">{{ data?.priority }}</a-tag>
+        <div v-if="data?.priority !== 'Low'" class="text-end">
+            <a-tag :color="data?.priority === 'High' ? 'red' : 'green'">{{ data?.priority }}</a-tag>
         </div>
 
-        {{ data?.title }}
+        <h6 class="text-sm">{{ data?.title }}</h6>
         <div v-if="data?.assigned_users?.length > 0" class="mt-2 flex justify-end">
             <div v-for="member of data.assigned_users">
                 <a-popover>
@@ -21,21 +21,16 @@
         </div>
     </div>
     <a-modal width="900px" title="Task" v-model:open="open" :footer="false">
-        <div class="grid grid-cols-2 mb-3">
-            <div>
-                <label class="block mb-1 font-semibold">Card Name</label>
-                <input class="py-2 px-3 border-2 w-full mb-2 rounded-lg" v-model="cardData.title" />
-                <div class="text-right">
-                    <button class="px-3 py-1 rounded-md bg-blue-700 text-white" @click="handleUpdateCard">
-                        Save
-                    </button>
-                </div>
-            </div>
-            <div v-if="isOwner || cardData?.user_id ===webUser.id" class="text-right">
-                <button class="px-3 py-1 rounded-lg bg-red-500 text-white" @click="handleDeleteCard">Delete Card</button>
+        <div class="grid grid-cols-1 mb-3">
+            <label class="block mb-1 font-semibold">Card Name</label>
+            <input class="py-2 px-3 border-2 w-full mb-2 rounded-lg" v-model="cardData.title" />
+            <div class="text-right">
+                <button class="px-3 py-1 rounded bg-slate-300 text-black" @click="handleUpdateCard">
+                    Save
+                </button>
             </div>
         </div>
-        <h4 class="font-bold text-base mb-2">Assign to:</h4>
+        <h4 class="font-semibold text-sm mb-2">Assign to:</h4>
         <div class="flex items-center">
             <div v-for="member of cardData.assigned_users" class="mr-2">
                 <a-popover>
@@ -46,7 +41,7 @@
                             :src="'/user.png'" class="w-[30px] h-[30px]" /></span>
                 </a-popover>
             </div>
-            <button v-if="!addMemberShow && isOwner" class="rounded-md bg-blue-800 px-5 py-1 text-white"
+            <button v-if="!addMemberShow && isOwner" class="px-3 py-1 rounded bg-slate-300 text-black"
                 @click="() => addMemberShow = true">Add</button>
             <div v-if="addMemberShow">
                 <a-select v-model:value="selectedMember" show-search placeholder="Select a member" style="width:300px"
@@ -58,46 +53,56 @@
                     @click="() => addMemberShow = false">cancel</button>
             </div>
         </div>
-        <a-divider class="bg-gray-300 h-[2px]" />
-        <div>
-            <h4 class="font-bold text-base mb-2">Add label:</h4>
-            <a-checkbox-group v-model:value="labels" @change="handleLabelChange" style="width: 100%">
-                <a-row :gutter="[16, 16]">
-                    <a-col v-for="label of allLabels" :key="label.color" :span="8">
-                        <a-checkbox :value="label.color">
-                            <div class="h-[20px] w-[100px] rounded-lg" :style="{ background: label.color }"></div>
-                        </a-checkbox>
-                    </a-col>
-                </a-row>
-            </a-checkbox-group>
-        </div>
-        <a-divider class="bg-gray-300 h-[2px]" />
-        <div class="grid grid-cols-2 gap-5">
+        <a-divider class="bg-gray-300 h-[1px]" />
+        <div class="grid grid-cols-2">
             <div>
-                <h4 class="font-bold text-base mb-2">Description</h4>
-                <div>
-                    <textarea class="w-full border-2 px-3 py-2 rounded-lg mb-2 border-gray-300"
-                        v-model="cardData.description" />
+                <h4 class="font-semibold text-sm mb-2">Add label:</h4>
+                <a-checkbox-group v-model:value="labels" @change="handleLabelChange" style="width: 100%">
+                    <a-row>
+                        <a-col v-for="label of allLabels" :key="label.color" class="mb-2" :span="24">
+                            <a-checkbox :value="label.color">
+                                <div class="h-[20px] w-[100px] rounded-lg" :style="{ background: label.color }"></div>
+                            </a-checkbox>
+                        </a-col>
+                    </a-row>
+                </a-checkbox-group>
+            </div>
+            <div>
+                <h4 class="font-semibold text-sm mb-2">Priority Level</h4>
+                <div class="flex">
+                    <a-select class="w-full mr-2" v-model:value="cardData.priority">
+                        <a-select-option v-for="pr of priorityData" :key="pr">
+                            {{ pr }}</a-select-option>
+                    </a-select>
                     <div class="text-right">
-                        <button class="px-3 py-1 rounded-md bg-blue-700 text-white" @click="handleUpdateCard">
+                        <button class="px-3 py-1 rounded bg-slate-300 text-black" @click="handleUpdateCard">
                             Save
                         </button>
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="mb-3">
+            <h4 class="font-semibold text-sm mb-2">Description</h4>
             <div>
-                <h4 class="font-bold text-base mb-2">Priority Level</h4>
-                <a-select class="w-full mb-2" v-model:value="cardData.priority">
-                    <a-select-option v-for="pr of priorityData" :key="pr">
-                        {{ pr }}</a-select-option>
-                </a-select>
+                <textarea class="w-full border-2 px-3 py-2 rounded-lg mb-2 border-gray-300"
+                    v-model="cardData.description" />
                 <div class="text-right">
-                    <button class="px-3 py-1 rounded-md bg-blue-700 text-white" @click="handleUpdateCard">
+                    <button class="px-3 py-1 rounded bg-slate-300 text-black" @click="handleUpdateCard">
                         Save
                     </button>
                 </div>
             </div>
+
         </div>
+        <a-divider class="bg-gray-300 h-[1px]" />
+        <div v-if="isOwner || cardData?.user_id === webUser.id" class="flex">
+            <p class="mr-5 font-bold">Do you want to delete?</p>
+            <div class="text-right">
+                <button class="px-3 py-1 rounded bg-red-500 text-white" @click="handleDeleteCard">Delete Card</button>
+            </div>
+        </div>
+
     </a-modal>
 </template>
 
@@ -118,7 +123,7 @@ const open = ref(false);
 const selectedMember = ref("");
 const cardData = ref({});
 // const allMembers = ref({});
-const options = ref([{ label: "ziaulhaque953@gmail.com", value: 1 }]);
+const options = ref([]);
 const addMemberShow = ref(false);
 const labels = ref([]);
 const webUser = ref('');
@@ -152,7 +157,7 @@ const handleDeleteCard = async () => {
 const handleUpdateCard = async () => {
     try {
         const res = await api.put('card/', cardData.value.id, { ...cardData.value });
-        if(res?.success){
+        if (res?.success) {
             refetch.value();
             fetchCard();
         }

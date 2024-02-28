@@ -9,7 +9,7 @@ class Card extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'task_list_id', 'description', 'labels', 'priority', 'user_id'];
+    protected $fillable = ['title', 'task_list_id', 'description', 'labels', 'priority', 'user_id', 'order'];
 
     public function taskList()
     {

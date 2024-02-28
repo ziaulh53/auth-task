@@ -1,16 +1,16 @@
 <template>
     <PrivateLayout />
     <BoardHeader :boardData="boardData" :members="members" :isOwner="isOwner" :refetch="fetchBoard" />
-    <div v-if="!loading && !accessDenied" class="overflow-x-auto whitespace-nowrap rounded p-4 w-full relative">
+    <div class="overflow-x-auto whitespace-nowrap rounded p-4 w-full relative">
         <draggable class="inline-flex space-x-4 items-start" v-model="allLists" group="list" @start="drag = true"
             item-key="id" :ondragend="onDragEnd">
             <template #item="{ element }">
-                <div class="w-[284px] bg-gray-200 p-2 rounded-lg max-h-[75vh] overflow-x-auto">
+                <div class="w-[284px] bg-slate-100 p-2 rounded border max-h-[75vh] overflow-x-auto">
                     <BoardList :data="element" :refetch="fetchLists" :isOwner="isOwner" :web-user="userStore.user?.user" />
                 </div>
             </template>
         </draggable>
-        <button class="w-[284px] bg-blue-700 rounded-lg ms-4 text-white py-2" @click="() => open = true">Add List</button>
+        <button v-if="!accessDenied" class="w-[284px] bg-slate-300 rounded ms-4 text-black py-2" @click="() => open = true">Add List</button>
     </div>
 
     <div v-if="accessDenied" class="text-center mt-10">

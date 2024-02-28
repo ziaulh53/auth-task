@@ -1,7 +1,7 @@
 <template>
-    <div class="bg-orange-200 px-[40px] md:px-[80px]">
+    <div class="bg-slate-800 px-[40px] md:px-[80px]">
         <div class="flex justify-between h-[60px] items-center">
-            <div>{{ boardData?.title }}</div>
+            <div class="text-white">{{ boardData?.title }}</div>
             <div class="flex items-center">
                 <div class="mr-2">
                     <a-popover placement="top">
@@ -17,7 +17,7 @@
                             {{ member?.name }}
                         </template>
                         <a-dropdown :disabled="!isOwner" :trigger="['click']">
-                            <a class="ant-dropdown-link" @click.prevent>
+                            <a class="ant-dropdown-link cursor-pointer" @click.prevent>
                                 <img :src="'/user.png'" class="w-[30px] h-[30px]" />
                             </a>
                             <template #overlay>
@@ -32,7 +32,7 @@
                     </a-popover>
                 </div>
                 <div v-if="isOwner">
-                    <button class="px-5 py-1 rounded-lg bg-slate-800 text-white font-semibold"
+                    <button class="px-5 py-1 rounded-lg bg-slate-300 text-black text-sm font-semibold"
                         @click="() => open = true">Add
                         Member</button>
                 </div>

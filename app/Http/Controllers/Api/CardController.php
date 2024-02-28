@@ -35,14 +35,14 @@ class CardController extends Controller
             return response()->json(['errors' => $validator->errors()], 422);
         }
 
-         Card::create([
+        Card::create([
             'task_list_id' => $request->task_list_id,
             'title' => $request->title,
-            'user_id'=>$userId,
-            'priority'=>'Low',
-            'order'=> $request->order
+            'user_id' => $userId,
+            'priority' => 'Low',
+            'order' => $request->order
         ]);
-        return response(['success'=>true, 'msg'=>'Card created']);
+        return response(['success' => true, 'msg' => 'Card created']);
     }
 
     /**
@@ -54,7 +54,7 @@ class CardController extends Controller
         $boardId = $request->query('board_id');
         $board = Board::query()->find($boardId);
         $members = $board->members()->get();
-        return response(['success'=>true, 'card'=>$card, 'members'=>$members]);
+        return response(['success' => true, 'card' => $card, 'members' => $members]);
     }
 
     /**
@@ -75,9 +75,9 @@ class CardController extends Controller
             'description' => 'nullable|string',
             'priority' => 'nullable|in:Low,Medium,High',
         ]);
-    
+
         $card = Card::findOrFail($id);
-    
+
         $card->fill($validatedData);
         $card->save();
         return response(['success' => true, 'msg' => 'Card updated successfully']);
@@ -89,8 +89,22 @@ class CardController extends Controller
     public function destroy(string $id)
     {
         $card = Card::findOrFail($id);
+        $listId = $card->task_list_id;
+        $deletedIndex = $card->order;
+
         $card->delete();
+        $this->updateOrdersWithinListAfterDeletion($listId, $deletedIndex);
         return response(['success' => true, 'msg' => 'Deleted']);
+    }
+
+    // decrement after delete card
+    private function updateOrdersWithinListAfterDeletion($listId, $deletedIndex)
+    {
+        // Decrement order of cards after the deleted card in the list
+        Card::where('task_list_id', $listId)
+            ->where('order', '>', $deletedIndex)
+            ->orderBy('order')
+            ->decrement('order');
     }
 
     public function assignMember(Request $request)
@@ -127,12 +141,13 @@ class CardController extends Controller
         return response(['success' => true, 'msg' => 'User removed from the card successfully.'], 200);
     }
 
-    public function updateCardLabel(Request $request){
+    public function updateCardLabel(Request $request)
+    {
         $request->validate([
             'card_id' => 'required|exists:cards,id',
             'labels' => 'array',
         ]);
-    
+
         try {
             $card = Card::findOrFail($request->card_id);
             $card->update(['labels' => $request->labels]);
