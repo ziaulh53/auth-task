@@ -54,13 +54,11 @@ class InvitationController extends Controller
 
     public function cancelInvitation(Request $request)
     {
-        // Check if the invitation exists
         $invitation = Invitation::findOrFail($request->invitation_id);
         if (!$invitation) {
             return response()->json(['success' => false, 'message' => 'Invitation not found.'], 404);
         }
 
-        // Delete the invitation
         $invitation->delete();
 
         return response()->json(['success' => true, 'msg' => 'Invitation canceled successfully.'], 200);

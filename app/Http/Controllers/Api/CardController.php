@@ -97,10 +97,8 @@ class CardController extends Controller
         return response(['success' => true, 'msg' => 'Deleted']);
     }
 
-    // decrement after delete card
     private function updateOrdersWithinListAfterDeletion($listId, $deletedIndex)
     {
-        // Decrement order of cards after the deleted card in the list
         Card::where('task_list_id', $listId)
             ->where('order', '>', $deletedIndex)
             ->orderBy('order')
@@ -111,7 +109,6 @@ class CardController extends Controller
     {
         $card = Card::findOrFail($request->card_id);
         $user = User::findOrFail($request->user_id);
-        // Check if the card and user exist
         if (!$card || !$user) {
             return response(['success' => false, 'msg' => 'Card or user not found.'], 404);
         }
