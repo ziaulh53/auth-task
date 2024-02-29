@@ -1,12 +1,11 @@
-# Project Name
+# Auth Task
 
-Brief description of your project.
+This is a task project.
 
 ## Table of Contents
 
 - [Introduction](#introduction)
 - [Installation](#installation)
-- [Usage](#usage)
 
 ## Introduction
 
