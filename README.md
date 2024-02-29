@@ -33,9 +33,16 @@ Brief description of your project.
 
    composer install
 
+   yarn or npm i
+
    cp .env.example .env
 
    php artisan key:generate
 
    php artisan migrate
 
+2. Run the project:
+   ```bash
+   php artisan serve
+
+   yanr dev
