@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { Board, BoardDetails, Invitations, Signin, Signup } from "../pages";
+import { Board, BoardDetails, ForgotPassword, Invitations, ResetPassword, Signin, Signup } from "../pages";
 import { useAuthStore } from "../store";
 
 const routes = [
@@ -15,6 +15,22 @@ const routes = [
         path: "/signup",
         name: "signup",
         component: Signup,
+        meta: {
+            requireAuth: false,
+        },
+    },
+    {
+        path: "/forget-password",
+        name: "forget-password",
+        component: ForgotPassword,
+        meta: {
+            requireAuth: false,
+        },
+    },
+    {
+        path: "/reset-password",
+        name: "reset-password",
+        component: ResetPassword,
         meta: {
             requireAuth: false,
         },

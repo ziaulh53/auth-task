@@ -1,8 +1,8 @@
 import { notification } from "ant-design-vue";
 
 notification.config({
-  placement: "bottomRight",
-  bottom: "50px",
+  placement: "topRight",
+  top: "50px",
   duration: 2,
 });
 export const notify = (data, callBackFunction, callBackFunctionTwo) => {
