@@ -44,4 +44,4 @@ This is a task project.
    ```bash
    php artisan serve
 
-   yanr dev
+   yarn dev
